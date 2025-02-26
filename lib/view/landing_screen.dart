@@ -16,12 +16,16 @@ class LandingScreen extends StatefulWidget{
   const LandingScreen({super.key});
 
   State createState() => _LandingScreenState();
+
+  
 }
 
 class _LandingScreenState extends State{
   
 
    int _selectedIndex=0;
+
+
   List<dynamic> tabItems = [
     Center(child: Text("0")),
     Center(child: Text("1")),
@@ -30,7 +34,8 @@ class _LandingScreenState extends State{
     Center(child: Text("4"))
   ];
 
-    // bottom navigation variables and functions
+
+  // bottom navigation variables and functions
     var _selectedTab = _SelectedTab.home;
     
     void _handleIndexChanged (int a){
@@ -42,6 +47,7 @@ class _LandingScreenState extends State{
 
   int currentScreen = 0;
 
+ 
 
   @override
   Widget build(BuildContext context){

@@ -2,20 +2,20 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-AppBar myAppBar(){
+AppBar myAppBar(String name){
   return AppBar(
           title:Expanded(
             flex:1,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children:[
-                Text("Hello,",
+                Text("$name,",
                   style:GoogleFonts.montserrat(
                     fontSize:20,
                     fontWeight: FontWeight.bold,
                     color:Colors.grey,                  
                   )),
-               Text("Sagar,",
+               Text("$name,",
                   style:GoogleFonts.montserrat(
                     fontSize:28,
                     fontWeight: FontWeight.bold,

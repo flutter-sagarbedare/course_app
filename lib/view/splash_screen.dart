@@ -1,3 +1,4 @@
+import 'package:course_app/view/landing_screen.dart';
 import 'package:course_app/view/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -124,7 +125,7 @@ class _SplashScreenState extends State<SplashScreen> {
                         onTap:(){
                           Navigator.of(context).pop();
                           Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context){
-                            return HomeScreen();
+                            return LandingScreen();
                           }));
 
                         },
@@ -333,7 +334,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(80, 42, 37, 117),
+      backgroundColor: Color.fromARGB(230, 42, 37, 117),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.only(top: 20, left: 50, right: 50),
