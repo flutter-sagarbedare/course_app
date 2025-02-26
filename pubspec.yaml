@@ -1,0 +1,37 @@
+name: course_app
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: ^3.8.0-1.0.dev
+ 
+dependencies:
+  crystal_navigation_bar: ^1.0.2
+  flashy_tab_bar2: ^0.0.10
+  flutter:
+    sdk: flutter
+  google_fonts: ^6.2.1
+  provider: ^6.1.2
+  
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  
+
+
+flutter:
+  uses-material-design: true
+  assets:
+      - assets/amico.png
+      - assets/circle.png
+      - assets/camera.png
+      - assets/clock.png
+      - assets/icon-lock.png
+      - assets/profile.png
+      - assets/star.png
+      - assets/studying.png
+      - assets/cube.png
+      - assets/menu.png
