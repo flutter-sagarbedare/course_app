@@ -1,14 +1,17 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:course_app/view/course_data_screen.dart';
+import 'package:course_app/view/lectures_screen.dart';
 import 'package:course_app/view/courses_screen.dart';
 import 'package:course_app/view/home_screen.dart';
 import 'package:course_app/view/landing_screen.dart';
 import 'package:course_app/view/login_screen.dart';
 import 'package:course_app/view/profile_screen.dart';
-import 'package:course_app/view/test_data.dart';
+import 'package:course_app/view/database.dart';
+import 'package:course_app/view/video_home.dart';
+import 'package:course_app/view/yt_video_view_model.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:course_app/view/sign_up.dart';
 import 'package:course_app/view/splash_screen.dart';
@@ -16,7 +19,8 @@ import 'package:provider/provider.dart';
 
 
 void main()async{
-  WidgetsFlutterBinding.ensureInitialized();
+  // BindingBase.debugZoneErrorsAreFatal = true;
+    WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: FirebaseOptions(
         apiKey: "AIzaSyD-IQDE_sSSYTrgY_5nlRnBLp-vpzVQq9c",
@@ -57,15 +61,17 @@ class MainApp extends StatelessWidget{
   @override
   Widget build(BuildContext context){
     return
-    //  MultiProvider(
-    //   providers:[],
-    //   child:
+     MultiProvider(
+      providers:[
+        ChangeNotifierProvider<YtVideoViewModel>(create: (_)=>YtVideoViewModel(),),
+      ],
+      child:
       MaterialApp(
       debugShowCheckedModeBanner: false,
-      // home:TestApp(),
-      home:SplashScreen(),
+      home:LandingScreen(),
+      // home:YoutubeHomePage(),
+    )
     );
-    // );
   }
 }
 

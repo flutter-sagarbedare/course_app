@@ -359,69 +359,83 @@ class _SplashScreenState extends State<SplashScreen> {
                   const SizedBox(height: 16),
         
                   Text(
-                    "Lear easy and fast with Studee Watch video learning anytime",
+                    "Learn easy and fast with Studee Watch video learning anytime",
                     style: GoogleFonts.montserrat(color: Colors.white),
                   ),
         
                   const SizedBox(height: 48),
-        
-                  GestureDetector(
-                    onTap: () {
-                      print("in sign in button");
-                      //  Navigator.of(context).push(MaterialPageRoute(builder: (context){
-                      //    return LoginScreen();
-                      //  }));
-                      // myBottomSheet(context);
-                      myLoginBottomSheet(context,true);
 
-                      setState(() {});
-                    },
-                    child: Container(
-                      height: 60,
-                      width: 370,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Center(
-                        child: Text(
-                          "Sign In",
-                          style: GoogleFonts.montserrat(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-        
-                  const SizedBox(height: 16),
-        
-                  GestureDetector(
-                    onTap: () {
-                      print("in sign up button");
-                      myLoginBottomSheet(context,false);
 
-                      //  Navigator.of(context).push(MaterialPageRoute(builder: (context){
-                      //    return SignUp();
-                      //  }));
-                    },
-                    child: Container(
-                      height: 60,
-                      width: 370,
-                      decoration: BoxDecoration(
-                        color: Color.fromRGBO(255, 255, 255, 0.582),
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Center(
-                        child: Text(
-                          "Sign Up",
-                          style: GoogleFonts.montserrat(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
+                  GestureDetector(
+                    onTap:(){},
+                    child:Center(
+                      child:Text(
+                        "Let's Get Started",
+
+                        style:GoogleFonts.montserrat(
+                          fontSize:14,
+                          fontWeight:FontWeight.w600,
+                      )
+                      )
+                    )
                   ),
+                  // GestureDetector(
+                  //   onTap: () {
+                  //     print("in sign in button");
+                  //     //  Navigator.of(context).push(MaterialPageRoute(builder: (context){
+                  //     //    return LoginScreen();
+                  //     //  }));
+                  //     // myBottomSheet(context);
+                  //     myLoginBottomSheet(context,true);
+
+                  //     setState(() {});
+                  //   },
+                  //   child: Container(
+                  //     height: 60,
+                  //     width: 370,
+                  //     decoration: BoxDecoration(
+                  //       color: Colors.white,
+                  //       borderRadius: BorderRadius.circular(15),
+                  //     ),
+                  //     child: Center(
+                  //       child: Text(
+                  //         "Sign In",
+                  //         style: GoogleFonts.montserrat(
+                  //           fontWeight: FontWeight.bold,
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
+        
+                  // const SizedBox(height: 16),
+        
+                  // GestureDetector(
+                  //   onTap: () {
+                  //     print("in sign up button");
+                  //     myLoginBottomSheet(context,false);
+
+                  //     //  Navigator.of(context).push(MaterialPageRoute(builder: (context){
+                  //     //    return SignUp();
+                  //     //  }));
+                  //   },
+                  //   child: Container(
+                  //     height: 60,
+                  //     width: 370,
+                  //     decoration: BoxDecoration(
+                  //       color: Color.fromRGBO(255, 255, 255, 0.582),
+                  //       borderRadius: BorderRadius.circular(15),
+                  //     ),
+                  //     child: Center(
+                  //       child: Text(
+                  //         "Sign Up",
+                  //         style: GoogleFonts.montserrat(
+                  //           fontWeight: FontWeight.bold,
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             ],

@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:course_app/services/yt_api_services.dart';
 import 'package:course_app/view/appbar_screen.dart';
-import 'package:course_app/view/course_data_screen.dart';
+import 'package:course_app/view/lectures_screen.dart';
+import 'package:course_app/view/video_home.dart';
 import 'package:flutter/material.dart';
 import 'package:flashy_tab_bar2/flashy_tab_bar2.dart';
 import 'package:crystal_navigation_bar/crystal_navigation_bar.dart';
@@ -94,10 +96,18 @@ class _CoursesScreenState extends State<CoursesScreen> {
                                 ),
                               
                               GestureDetector(
-                                onTap:(){
-                                  Navigator.of(context).push(MaterialPageRoute(builder: (context){
-                                    return CourseDataScreen(); 
-                                  }));
+                                onTap:() async{
+                                  
+                                   var  videos =await YtApiServices().getAllVideosFromPlaylist();
+                              Navigator.of(context).push(
+                                MaterialPageRoute(builder: (context){
+                                  return 
+                               YoutubeHomePage(videos: videos,);
+                                })
+                              );
+                                  // Navigator.of(context).push(MaterialPageRoute(builder: (context){
+                                  //   return YoutubeHomePage(videos,); 
+                                  // }));
                                 },
                                 child: Icon(Icons.arrow_circle_right,
                                 size:40
