@@ -9,20 +9,29 @@ import 'package:course_app/const/app_const.dart';
 class YtApiServices{
   String baseUrl = "https://www.googleapis.com/youtube/v3/playlistItems";
 
-  getAllVideosFromPlaylist()async{
+  // String source='';
+
+  // YtApiServices([String? source]);
+
+  getAllVideosFromPlaylist([String? source])async{
 
     // try{
 
       List<YtVideo>? allVideos=[];
 
+      String link = 'https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=$source&key=AIzaSyAEXZSGhsQ-St7smhDyjhgej24VzOjyjIo';
+
       
-    var response = await http.get(Uri.parse(baseUrl+"?part=snippet&playlistId=PLjVLYmrlmjGfGLShoW0vVX_tcyT8u1Y3E&key=${ApiKey.api_key}"));
+    // var response = await http.get(Uri.parse(baseUrl+"?part=snippet&maxResults=50&playlistId=PLjVLYmrlmjGfGLShoW0vVX_tcyT8u1Y3E&key=${ApiKey.api_key}"));
+    var response = await http.get(Uri.parse(link));
     if(response.statusCode==200){
       var jsonData = jsonDecode(response.body);
       // log("the data from yt api is $jsonData");
 
       List playListItems = jsonData['items'];
-      log("${playListItems[0]}");
+      log("playlist items :${playListItems[0]}");
+
+      // playListItems
 
       for(var videoData in playListItems){
         YtVideo video =  YtVideo(
@@ -30,7 +39,9 @@ class YtApiServices{
            videoTitle: videoData['snippet']['title'],
             thumbnailUrl: videoData['snippet']['thumbnails']['maxres']['url'], 
             viewsCount: "100K", 
-            channelName: videoData['snippet']['channelTitle']);
+            channelName: videoData['snippet']['channelTitle'],
+            maxResults: 50
+            );
         // log(video.videoId!);
         // log(video.videoTitle!);
         // log(video.thumbnailUrl!);

@@ -1,21 +1,56 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:course_app/main.dart';
+import 'package:course_app/view/sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:flashy_tab_bar2/flashy_tab_bar2.dart';
 import 'package:crystal_navigation_bar/crystal_navigation_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatefulWidget{
   const ProfileScreen({super.key});
+  
 
   @override
   State<ProfileScreen> createState ()=>_ProfileScreenState();
 }
 class _ProfileScreenState extends State<ProfileScreen>{
+    String? userId;
+    Map<String,dynamic> userdata={};
 
+  void getUserInfo()async{
+    
+    userdata = Provider.of<UserInformation>(context,listen:false).userData;
+
+
+    // DocumentSnapshot doc = await FirebaseFirestore.instance.collection("Users").doc(userId).get();
+
+    // userdata = doc.data() as Map<String,dynamic>;
+    setState(() {
+      
+    });
+  }
+
+    @override
+    void initState(){
+
+   
+    getUserInfo();
+
+      super.initState();
+    }
 
  @override
   Widget build(BuildContext context){
+
+    if(userdata==null){
+      return CircularProgressIndicator();
+      
+          }
+
     return Scaffold(
        appBar:AppBar(
         title:Text("Profile",
@@ -23,34 +58,68 @@ class _ProfileScreenState extends State<ProfileScreen>{
           fontSize:30,
           fontWeight:FontWeight.bold
         )),
+        actions:[ GestureDetector(
+          onTap: ()async{
+            final prefs = await SharedPreferences.getInstance();
+
+  Navigator.of(context).push(MaterialPageRoute(builder: (context){
+    return SignIn();
+  }));
+  await prefs.clear(); 
+          },
+          child: Icon(Icons.logout)),const SizedBox(width: 30,)]
       ),
       // backgroundColor: Colors.blue,
-     body:Column(
+     body:
+     Consumer(
+      builder: (context, provider, child) {
+        return
+         StreamBuilder<List<Map<String, dynamic>>>(
+          stream:
+              Provider.of<CoreDataItems>(context, listen: false).fetchUserData(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return Center(child: Text('No data available'));
+            }
+
+            final dataList = snapshot.data!;
+
+            return          Column(
       children:[
            Row(
                   children: [
-                 Icon(Icons.circle,
-                 size:120),
+           Padding(
+            padding:EdgeInsets.all(15.0),
+            child:
+            Image.asset(
+              "assets/profile.png",
+              height:120
+            ),
+           ),
                 const SizedBox(
                   width:10
                 ),
                  Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                    children: [
-                     Text("Sagar bedare",
+                     Text("${userdata["name"]}",
                      style:GoogleFonts.montserrat(
                       fontSize: 23,
                       fontWeight: FontWeight.bold
                      )),
                      const SizedBox(height: 10,),
-                     Text("Sagaar Nivrutti Bedare",
+                        Text("${userdata["name"]}",
                       style:GoogleFonts.montserrat(
                       fontSize: 12,
                       color:Colors.grey,
                       fontWeight: FontWeight.w400
                      )),
                      const SizedBox(height: 7,),
-                     Text("Golegaon Jalgaon",
+                     Text("${userdata["address"]}",
                       style:GoogleFonts.montserrat(
                                                 color:Color.fromARGB(255, 42, 37, 117),                  
 
@@ -79,6 +148,7 @@ class _ProfileScreenState extends State<ProfileScreen>{
             child:Padding(
               padding: const EdgeInsets.all(30.0),
               child: ListView(
+                physics: BouncingScrollPhysics(),
                 children: [
                     Text("About",
                       style:GoogleFonts.montserrat(
@@ -98,7 +168,7 @@ class _ProfileScreenState extends State<ProfileScreen>{
                         child:Padding(
                           padding: const EdgeInsets.all(14.0),
                           child: Text(
-                            "My Name Is Sagar"
+                            "My Name Is ${userdata["name"]}"
                           ),
                         ),
                       ),
@@ -121,7 +191,7 @@ class _ProfileScreenState extends State<ProfileScreen>{
                         child:Padding(
                           padding: const EdgeInsets.all(14.0),
                           child: Text(
-                            "8669867540"
+                            "${userdata["contact_number"]}"
                           ),
                         ),
                       ),
@@ -147,7 +217,7 @@ class _ProfileScreenState extends State<ProfileScreen>{
                         child:Padding(
                           padding: const EdgeInsets.all(14.0),
                           child: Text(
-                            "sagarbedare@gmail.com"
+                            "${Provider.of<CoreDataItems>(context,listen:false).userEmail}",
                           ),
                         ),
                       ),
@@ -171,7 +241,7 @@ class _ProfileScreenState extends State<ProfileScreen>{
                         child:Padding(
                           padding: const EdgeInsets.all(14.0),
                           child: Text(
-                            "TYBCA"
+                            "${userdata["education_qualification"]}"
                           ),
                         ),
                       ),
@@ -192,7 +262,7 @@ class _ProfileScreenState extends State<ProfileScreen>{
                         child:Padding(
                           padding: const EdgeInsets.all(14.0),
                           child: Text(
-                            "GOlegaon Khurd Tal Bodwad"
+                            "${userdata["address"]}"
                           ),
                         ),
                       ),
@@ -213,7 +283,7 @@ class _ProfileScreenState extends State<ProfileScreen>{
                         child:Padding(
                           padding: const EdgeInsets.all(14.0),
                           child: Text(
-                            "C C++ Flutter and Dart"
+                            "${userdata["skills"]}"
                           ),
                         ),
                       ),
@@ -234,7 +304,7 @@ class _ProfileScreenState extends State<ProfileScreen>{
                         child:Padding(
                           padding: const EdgeInsets.all(14.0),
                           child: Text(
-                            "2year in TCS"
+                            "${userdata["experince"]}"
                           ),
                         ),
                       ),                    
@@ -245,7 +315,19 @@ class _ProfileScreenState extends State<ProfileScreen>{
           ),
         )
       ]
-     )
+     );
+
+
+  },
+        );
+      },
+    )
+
+  // Column(children: [
+  //   userdata["name"]==null ? CircularProgressIndicator() : Text("${userdata["name"]}"),
+  // ],)
+
+
     );
   }
 }

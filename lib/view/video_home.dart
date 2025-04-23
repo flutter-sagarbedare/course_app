@@ -58,7 +58,7 @@ class _YoutubeHomePageState extends State<YoutubeHomePage> {
         itemBuilder: 
       (context,index){
         return Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(12.0),
         child: GestureDetector(
           onTap:(){
               Navigator.of(context).push(MaterialPageRoute(builder: (context){
@@ -66,19 +66,46 @@ class _YoutubeHomePageState extends State<YoutubeHomePage> {
               }));
 
           },
-          child: SizedBox(
-            height:200,
+          child: Container(
+            decoration: BoxDecoration(
+              color:Color.fromRGBO(240, 244, 253, 1),
+              borderRadius: BorderRadius.circular(10)
+            ),
             child: Row(
-              mainAxisAlignment:MainAxisAlignment.start,
-              crossAxisAlignment:CrossAxisAlignment.start,
+              mainAxisAlignment:MainAxisAlignment.center,
+              crossAxisAlignment:CrossAxisAlignment.center,
               children: [
-            Image.network("${widget.videos[index].thumbnailUrl}",scale: 5,),
+            Container(
+              height: 140,
+              width: 200,
+              child: Image.network("${widget.videos[index].thumbnailUrl}",
+               loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                if(loadingProgress == null){
+            
+                return child;
+                }else{
+                    return Center(
+                      child: CircularProgressIndicator(
+                        
+                      ),
+                    );
+                }
+               }
+              ),
+              
+              ),
              const SizedBox(width:20),
             Expanded(
               child: Column(
                 children: [
-                  Text("${widget.videos[index].videoTitle}"),
-                  Text("${widget.videos[index].channelName}"),
+                  Text("${index+1} . ${widget.videos[index].videoTitle}",
+                  style: GoogleFonts.montserrat(
+                                  fontSize: 12,
+                                  // color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                  ),
+                  
                   
                 ],
               ),

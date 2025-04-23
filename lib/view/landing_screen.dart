@@ -2,25 +2,40 @@ import 'dart:developer';
 import 'dart:io';
 // import 'dart:nativewrappers/_internal/vm/lib/mirrors_patch.dart';
 
+import 'package:course_app/main.dart';
 import 'package:course_app/view/courses_screen.dart';
 import 'package:course_app/view/home_screen.dart';
 import 'package:course_app/view/notification_screen.dart';
 import 'package:course_app/view/profile_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flashy_tab_bar2/flashy_tab_bar2.dart';
-import 'package:crystal_navigation_bar/crystal_navigation_bar.dart';
 
-enum _SelectedTab { home, favorite, add, search, person }
+import 'package:crystal_navigation_bar/crystal_navigation_bar.dart';
+import 'package:provider/provider.dart';
+
+enum _SelectedTab { home, courses, notification, profile }
 
 class LandingScreen extends StatefulWidget{
+
+
+
   const LandingScreen({super.key});
 
+
+
+  @override
   State createState() => _LandingScreenState();
 
   
 }
 
 class _LandingScreenState extends State{
+
+  @override
+  void initState(){
+    Provider.of<CoreDataItems>(context,listen: false).getUseronTheLoad();
+    // setState((){});
+    super.initState();
+  }
   
 
    int _selectedIndex=0;
@@ -45,7 +60,7 @@ class _LandingScreenState extends State{
     }
 
 
-  int currentScreen = 0;
+  int currentScreen =0;
 
  
 
@@ -56,87 +71,44 @@ class _LandingScreenState extends State{
 
       home:
       Scaffold(
-      // bottomNavigationBar: Container(
-      //   decoration: BoxDecoration(
-      //     borderRadius:BorderRadius.only(topLeft:Radius.circular(20),topRight: Radius.circular(20)),
-      //   ),
-      //   child: FlashyTabBar(
-      //       // backgroundColor: Color.fromARGB(80, 42, 37, 117),
-      //       selectedIndex: _selectedIndex,
-      //       showElevation: true,
-      //       items: [ 
-      //           FlashyTabBarItem(
-      //             icon: GestureDetector(
-      //             onTap:(){
-      //               currentScreen = 1;
-      //                setState(() {
-                      
-      //               });  
-      //             },
-      //               child: Icon(Icons.home),
-      //             ),
-      //             title: Text('Home'),                
-      //             ),
-      //           FlashyTabBarItem(
-      //             icon: GestureDetector(child: Icon(Icons.play_circle_outlined,
-                  
-      //             ),
-      //             onTap:(){   
-      //               currentScreen=2;  
-      //                setState(() {
-                      
-      //               });                
-      //               },
-      //             ),
-      //             title: Text('Courses'),
-      //           ),         
-      //            FlashyTabBarItem(
-      //             icon: GestureDetector(child: Icon(Icons.notification_add_outlined),
-      //             onTap:(){
-      //               currentScreen=3;    
-      //               setState(() {
-                      
-      //               });          
-      //             },
-      //             ),
-      //             title: Text('Notification'),
-      //           ),
-               
-      //           FlashyTabBarItem(
-      //             icon: GestureDetector(child: Icon(Icons.people),
-      //             onTap:(){
-      //               currentScreen=4;     setState(() {
-                      
-      //               });                 
-      //             },
-      //           ),
-      //             title: Text('Profile'),
-      //           ),
-      //         ],
-      //       onItemSelected:(index) => setState(() {
-      //      _selectedIndex = index;
-      //          }),
-      //       ),
-      
-      // ),
+     
    
       extendBody: true,
 
-      bottomNavigationBar:SizedBox(
-        width: 100,
-        child:CrystalNavigationBar(
+      bottomNavigationBar:Container(
+        height:70,
+        width:30,
+        clipBehavior: Clip.hardEdge,
+        decoration: BoxDecoration(
+          
+          borderRadius:BorderRadius.only(topLeft: Radius.circular(17),topRight: Radius.circular(17)),
+           boxShadow: [
+            BoxShadow(
+              color:Colors.black,
+              spreadRadius: 1,
+              blurRadius: 10
+            )
+          ],
+        ),
+        child: CrystalNavigationBar(
          
-          margin: EdgeInsets.all(20),
+          curve:Curves.linear,
+          // height: 30,
+          // splashColor: Colors.redAccent,
+          borderRadius: 10,
+          enableFloatingNavBar: false,
+          margin: EdgeInsets.only(top:0,left: 13,right:13),
           itemPadding: EdgeInsets.all(10),
-          backgroundColor: Colors.black.withOpacity(0.50),
+          // backgroundColor: Colors.black.withOpacity(0.50),
+          backgroundColor: Colors.white,
           onTap:
           (index){
+            Provider.of<CoreDataItems>(context,listen: false).selectedIndex = index;
              setState((){
         _selectedTab = _SelectedTab.values[index];        
-      });
-            // _handleIndexChanged;
+              });
+            _handleIndexChanged;
             setState((){
-            currentScreen=index;
             });
           },
           currentIndex: _SelectedTab.values.indexOf(_selectedTab),
@@ -153,26 +125,27 @@ class _LandingScreenState extends State{
             CrystalNavigationBarItem(
               icon: Icons.person_2,
             ),
-
+        
           ],
           
         
           ),
       ),
     
-    body:mainScreen(currentScreen)
+    body:mainScreen(context)
   
       ),
     );
   }
 }
 
-Scaffold mainScreen(int currentScreen){
+dynamic mainScreen(BuildContext context){
+  int currentScreen=Provider.of<CoreDataItems>(context,listen: false).selectedIndex;
   if(currentScreen == 0 ){
       log(" in home screen $currentScreen");
       return Scaffold(
-        
         body:HomeScreen()
+        // body:HomeScreen(userId:userId)
       );
   }else if(currentScreen == 1){
       log("in courses screen $currentScreen");
@@ -194,35 +167,4 @@ return Scaffold(
       );
   }
 
-  // switch(currentScreen){
-  //   case 1:
-  //      return Scaffold(        
-  //       body:HomeScreen()
-  //     );
-    
-  //   case 2:
-  //      return Scaffold(
-        
-  //       body:CoursesScreen()
-  //     );
-
-
-  //   case 3:
-  //    return Scaffold(
-        
-  //       body:NotificationScreen()
-  //     ); 
-    
-  //   case 4:
-  //      return Scaffold(
-        
-  //       body:ProfileScreen()
-  //     );
-    
-  //   default:
-  //      return Scaffold(
-  //     body: 
-  //     HomeScreen()
-  //      );
-  // }
 }

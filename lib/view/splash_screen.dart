@@ -1,9 +1,18 @@
+import 'dart:async';
+import 'dart:developer';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:course_app/main.dart';
 import 'package:course_app/view/landing_screen.dart';
-import 'package:course_app/view/login_screen.dart';
+import 'package:course_app/view/main_page.dart';
+// import 'package:course_app/view/login_screen.dart';
+import 'package:course_app/view/sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:course_app/view/sign_up.dart';
 import 'package:course_app/view/home_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -15,6 +24,67 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   bool isAccountCreated = false;
   bool showPassword=false;
+
+  @override
+  void initState(){
+   
+    Timer(
+      Duration(seconds:3),
+      ()=>  checkLoginStatus()
+      // Navigator.of(context).pushReplacement(
+      //   MaterialPageRoute(builder: (context){
+      //     return SignIn();
+      //   }))
+      
+    );
+     
+    super.initState();
+  }
+
+  void setUserName()async{
+    final prefs = await SharedPreferences.getInstance();
+    final dynamic userName = prefs.getString('name');
+    final dynamic userId = prefs.getString('name');
+
+
+    Provider.of<CoreDataItems>(context,listen:false).setUserName(userName);
+  }
+
+  Future<void> setInfo(String userId)async{
+      // final prefs = await SharedPreferences.getInstance();
+      // dynamic username = prefs.getString('name');
+      // dynamic userid =prefs.getString('userId') ;
+      // print("username id in splash screen"+username+userid);
+      // Provider.of<CoreDataItems>(context,listen:false).setUserData(userid,username);
+      log('in setInfo');
+      DocumentSnapshot docs = await FirebaseFirestore.instance.collection('Users').doc(userId).get();
+
+      Provider.of<UserInformation>(context,listen:false).userData = docs.data() as Map<String,dynamic>;
+      log("User data from splash screen map set in provider");      
+
+  }
+
+    void checkLoginStatus()async{
+      final prefs = await SharedPreferences.getInstance();
+     final dynamic isLoggedIn = prefs.get('isLogin') ?? false;
+     final dynamic userId = prefs.get('userId');
+
+      if(isLoggedIn){
+        log("user is logged in");
+        log('user id in splash screen is ${prefs.getString('userId')}');
+        await setInfo(userId);
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context){
+          return LandingScreen();
+        }));
+      }else{
+        log("user is not logged in");
+
+         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context){
+          return SignIn();
+        }));
+      }
+    }
+
   
   dynamic myLoginBottomSheet(BuildContext context,bool doLogin) {
     if(isAccountCreated || doLogin){
@@ -123,7 +193,7 @@ class _SplashScreenState extends State<SplashScreen> {
                       
                        GestureDetector(
                         onTap:(){
-                          Navigator.of(context).pop();
+                          // Navigator.of(context).pop();
                           Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context){
                             return LandingScreen();
                           }));
@@ -363,21 +433,26 @@ class _SplashScreenState extends State<SplashScreen> {
                     style: GoogleFonts.montserrat(color: Colors.white),
                   ),
         
-                  const SizedBox(height: 48),
+                  const SizedBox(height: 95),
 
 
-                  GestureDetector(
-                    onTap:(){},
-                    child:Center(
+                  Container(
+                    height: 60,
+                    decoration: BoxDecoration(
+                      // color: Colors.white,
+                      borderRadius: BorderRadius.circular(10)
+                    ),
+                    child: Center(
                       child:Text(
-                        "Let's Get Started",
-
+                        "Getting Started",
+                    
                         style:GoogleFonts.montserrat(
-                          fontSize:14,
+                          fontSize:19,
+                          color: Colors.white,
                           fontWeight:FontWeight.w600,
                       )
                       )
-                    )
+                    ),
                   ),
                   // GestureDetector(
                   //   onTap: () {

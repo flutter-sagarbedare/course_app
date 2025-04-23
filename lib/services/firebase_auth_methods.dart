@@ -22,7 +22,7 @@ class FirebaseAuthMethods{
       }else if(ex.code == "email-already-in-use"){
         print("the Account Already Exists");
       }
-      showSnackBar(context,ex.message!);
+      displaySnackBar(context,ex.message!);
     }
   }
 

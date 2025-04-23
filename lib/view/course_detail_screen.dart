@@ -1,9 +1,15 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:course_app/const/app_const.dart';
+import 'package:course_app/main.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CourseDetailScreen extends StatefulWidget {
-  DocumentSnapshot<Object?> ds;
+  final ds;
 
   CourseDetailScreen({super.key, required this.ds});
 
@@ -13,6 +19,29 @@ class CourseDetailScreen extends StatefulWidget {
 
 class _CourseDetailScreenState extends State<CourseDetailScreen> {
   _CourseDetailScreenState();
+
+  dynamic userId;
+  
+
+  void buyCourse()async{
+    SharedPreferences prefs =await SharedPreferences.getInstance();
+    userId = prefs.getString('userId');
+   log("$userId");
+   log("${widget.ds["Id"]}");
+
+     await FirebaseFirestore.instance.collection('Users').doc(userId).update(
+          {
+           
+            'courses_own':FieldValue.arrayUnion([widget.ds["Id"]]) 
+          }
+        );
+                            displaySnackBar(context, "Congratulations!!");
+        
+
+        // Navigator.of(context).pop();
+
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +61,82 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
           ),
         ),
 
-        onPressed: () {},
+        onPressed: () {
+          // Navigator.of(context).push(
+          //   MaterialPageRoute(builder: (context){
+          //     return Dialog(
+
+          //     );
+          //   })
+          // );
+          showDialog(context: context, builder: (context){
+              return Dialog(
+                backgroundColor: Colors.white,
+                child:SizedBox(
+                  height: 200,
+                  width: 200,
+                  child: Padding(
+                    padding: const EdgeInsets.all(26.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text("Do you want to Buy Course??",
+                        style:GoogleFonts.montserrat(
+                          fontSize:20
+                        )
+                        ),
+                    
+                        Row(children: [
+                          ElevatedButton(onPressed: (){
+                            
+                            buyCourse();
+        Navigator.of(context).pop((){
+
+        });
+                          }, 
+                          style: ButtonStyle(
+                            backgroundColor: WidgetStatePropertyAll(Colors.green),
+                            
+                          ),
+                          child: Center(
+                            child:Row(
+                              children: [
+                                Text("Buy",
+                                style:GoogleFonts.montserrat(
+                                  color: Colors.white
+                                )
+                                ),
+                                const SizedBox(width: 10,),
+                                Icon(Icons.get_app,
+                                color: Colors.white,)
+                              ],
+                            )
+                          ),
+                          ),
+                          const SizedBox(width: 30,),
+                          ElevatedButton(onPressed: (){
+        Navigator.of(context).pop();
+
+                          }, 
+                          child: Center(
+                            child:Text("Cancel")
+                          ),
+                          ),
+                          
+                    
+                        ],
+                        
+                        ),
+                        
+                      ],
+                    ),
+                  ),
+                )
+              );
+          });
+          // buyCourse();
+        },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       appBar: AppBar(title: Text("${widget.ds["Name"]}")),
@@ -116,7 +220,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                     separatorBuilder: (context, index) {
                       return SizedBox(height: 20);
                     },
-                    itemCount: 20,
+                    itemCount: widget.ds['Syllabus_topics'].length,
                     itemBuilder: (context, index) {
                       return Container(
                         margin: EdgeInsets.all(10),
@@ -139,7 +243,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                             children: [
                               Icon(Icons.star_half),
                               const SizedBox(width: 10),
-                              Text("Topic 1"),
+                              Text("${widget.ds['Syllabus_topics'][index]}"),
                             ],
                           ),
                         ),

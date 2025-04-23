@@ -1,8 +1,14 @@
 
+import 'dart:developer';
+
+import 'package:course_app/view/home_screen.dart';
+import 'package:course_app/view/landing_screen.dart';
+import 'package:course_app/view/sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-AppBar myAppBar(String name){
+AppBar myAppBar(String name,BuildContext context){
   return AppBar(
           title:Row(
             children: [
@@ -11,12 +17,13 @@ AppBar myAppBar(String name){
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children:[
-                    Text("$name,",
+                    Text("Hello",
                       style:GoogleFonts.montserrat(
                         fontSize:20,
                         fontWeight: FontWeight.bold,
                         color:Colors.grey,                  
                       )),
+                 
                    Text("$name,",
                       style:GoogleFonts.montserrat(
                         fontSize:28,
@@ -29,9 +36,9 @@ AppBar myAppBar(String name){
             ],
           ),
          actions:[
-          Icon(Icons.circle_outlined,
-          color:Colors.red,
-          size:60),
+          Image.asset(
+            "assets/profile.png"
+          ),
           const SizedBox(width:20)
          ]
         );

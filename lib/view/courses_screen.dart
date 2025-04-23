@@ -1,13 +1,20 @@
+import 'dart:developer';
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:course_app/main.dart';
 import 'package:course_app/services/yt_api_services.dart';
 import 'package:course_app/view/appbar_screen.dart';
+import 'package:course_app/view/course_detail_screen.dart';
 import 'package:course_app/view/lectures_screen.dart';
 import 'package:course_app/view/video_home.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flashy_tab_bar2/flashy_tab_bar2.dart';
 import 'package:crystal_navigation_bar/crystal_navigation_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CoursesScreen extends StatefulWidget {
   const CoursesScreen({super.key});
@@ -17,206 +24,305 @@ class CoursesScreen extends StatefulWidget {
 }
 
 class _CoursesScreenState extends State<CoursesScreen> {
+
+  List<dynamic> yourOwnCourses=[];
+
+  List<Map<String, dynamic>> courseData = [];
+
+  Stream? coursesStream;
+
+   String? userId;
+  String? userName;
+
+  bool? courseFetched;
+
+  Map<String,dynamic> userData ={};
+   
+ 
+    void setUserData(){
+
+      userData =  Provider.of<UserInformation>(context,listen:false).userData;
+      log("In Home Screen got userdata map from provider");
+    }
+  
+  
+
+   @override
+   void initState(){
+    setUserData();
+    courseFetch();
+    log("courses fetching");
+    super.initState();
+   }
+
   @override
   Widget build(BuildContext context) {
+    // if(courseData.isEmpty){    
+    //   return Center(child:Text("No Courses"));
+    // }
+    
+    // courseFetch();
+    
     return Padding(
       padding: const EdgeInsets.only(top: 20.0),
       child: Scaffold(
         // backgroundColor: Colors.blue,
-        appBar: myAppBar("Youe Courses"),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 30),
-            Expanded(
-              child: Container(
-                
-                   padding: EdgeInsets.all(20),
+        appBar: myAppBar(userData['name'],context),
+        body:  Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // const SizedBox(height:10),
+              Padding(
+                padding: const EdgeInsets.all(17.0),
+                child: Text(
+                  "Coding is All about Exloring...",
+                  style: TextStyle(color: Colors.grey[600], fontSize: 17),
+                ),
+              ),
+              // const SizedBox(
+              //   height:20
+              // ),
+              Flexible(
+                flex: 1,
+                // height:MediaQuery.sizeOf(context).height/1.6,
+                child: 
+                Container(
+                  padding: EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     // color:const Color.fromARGB(150, 158, 158, 158),
                     // border: Border.all(color:Colors.red),
-                color: Color.fromARGB(255, 240, 244,253),
-              
+                    color: Color.fromARGB(237, 240, 244, 253),
+      
                     boxShadow: [
                       BoxShadow(
-                        color:Colors.black,
+                        color: Colors.black,
                         spreadRadius: 0.0,
                         blurRadius: 30,
-                      )
+                      ),
                     ],
                     borderRadius: BorderRadius.only(
-                      topLeft:Radius.circular(30),
-                      topRight:Radius.circular(30),
-                      )
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30),
+                    ),
                   ),
-                child:ListView.separated(
-                    itemCount: 10,
-                    separatorBuilder: (context,index){
-                      return SizedBox(
-                        height: 10,
-                      );
-                    },
-                    itemBuilder: (context,index){
-                      return
-                      Container(
-                        clipBehavior: Clip.hardEdge,
-                        decoration: BoxDecoration(
-                          color:Colors.grey,
-                          borderRadius: BorderRadius.circular(20),
-                          
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Image.network("https://th.bing.com/th/id/OIP.gZdVA2Uov4GGRzJc9vXuKAHaEK?rs=1&pid=ImgDetMain"),
-                            const SizedBox(height:10),
+                  child:AllCourses()),
+            
+        ) ]
 
- Padding(
-                                padding: const EdgeInsets.only(left:20.0,top:10,bottom:15,right:10),
-                                child:
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                  Text("Flutter Online",
-                                  style:GoogleFonts.montserrat(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold
-                                  )
-                                  ),
-                                  const SizedBox(height:10),
-                                  Text("72% Completed",style:GoogleFonts.montserrat(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500
-                                  )
-                                  ),
-                                  ]
-                                ),
+      ))     
+    );
+        }
+      
+        
+
+
+
+    Widget AllCourses()  {
+
+        if (courseFetched == null || courseFetched == false) {
+  
+    return Center(child: CircularProgressIndicator());
+  }
+
+  if (courseData.isEmpty) {
+    return Center(child: Text("No Courses Available"));
+  }{
+
+        return ListView.builder(
+              scrollDirection: Axis.vertical,
+              itemCount: courseData.length,
+              
+              itemBuilder: (context, index) {               
+
+                final course = courseData[index];
+
+                return  GestureDetector(
+                  onTap:()async{
+                    log(course['source']);
                               
-                              GestureDetector(
-                                onTap:() async{
-                                  
-                                   var  videos =await YtApiServices().getAllVideosFromPlaylist();
+                                              var  videos =await YtApiServices().getAllVideosFromPlaylist(course['source']);
                               Navigator.of(context).push(
                                 MaterialPageRoute(builder: (context){
                                   return 
                                YoutubeHomePage(videos: videos,);
                                 })
                               );
-                                  // Navigator.of(context).push(MaterialPageRoute(builder: (context){
-                                  //   return YoutubeHomePage(videos,); 
-                                  // }));
-                                },
-                                child: Icon(Icons.arrow_circle_right,
-                                size:40
-                                ),
-                              )
-                            ],
-                          ),
-                          ),
-                          ],
-                        ),
-                      ) ;
-                      
+                  },
+                  child: SizedBox(
+                      height:320,
+                      width: 140,
+                      child: Column(
+                        children: [
+                          Container(
+                            clipBehavior: Clip.hardEdge,
+                            // height:250,
+                            // width:250,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(10),
+                                topRight: Radius.circular(10),
+                              ),
                     
-//                        Column(
-//                         children: [
-//                           Container(
-//                             // height:290,                        
-//                             decoration: BoxDecoration(
-//                               borderRadius: BorderRadius.circular(20),
-//                               color:Colors.red,
-//                             ),
-//                             child:Column(
-//                                       crossAxisAlignment: CrossAxisAlignment.start,
-                          
-//                               children: [
-//                                 const SizedBox(width:20),
-//                                 Container(
-//                                   // height:90,
-//                                   // width:90,
-//                                   decoration: BoxDecoration(
-//                                     borderRadius: BorderRadius.circular(10),
-//                                     // shape: BoxShape.rectangle,
-//                                     color:Colors.black
-//                                   ),
-//                                   child:Image.asset('assets/studying.png')
-//                                 ),
-//                                 const SizedBox(
-//                                   width:20
-//                                 ),
-                               
-//                                     Padding(
-//                                       padding: const EdgeInsets.all(10.0),
-//                                       child: Column(
-//                                         crossAxisAlignment: CrossAxisAlignment.start,
-//                                         children: [
-                                         
-//                                           Text(
-//                                             "C Language",
-//                                             style:GoogleFonts.montserrat(
-//                                               fontSize:22,
-//                                               fontWeight: FontWeight.bold,
-//                                             ),
-//                                           ),
-//                                           const SizedBox(
-//                                             height:10
-//                                           ),
-//                                           Row(
-//                                             children: [
-                                            
-//                                               Text("20 Lectures   Total 40hr    100 MCQ",
-//                                               style:GoogleFonts.montserrat(
-//                                                 fontSize:13,
-//                                                 fontWeight:FontWeight.w600
-//                                               )),
-//                                             ],
-//                                           ),
-//                                           const SizedBox(height:10)
-// ,                                          Row(
-//                                             children: [
-                                            
-//                                               Text("4000/- rs ",
-//                                               style:GoogleFonts.montserrat(
-//                                                 fontSize:19,
-//                                                 fontWeight:FontWeight.w600
-//                                               )),
-//                                             ],
-//                                           ),
-                          
-//                                         ],
-//                                       ),
-//                                     ),
-//                                   GestureDetector(
-//                                     onTap:(){},
-//                                     child:Container(
-//                                       height:60,
-//                                       decoration: BoxDecoration(
-//                                         color:Colors.blue,
-//                                         borderRadius: BorderRadius.circular(13)
-//                                       ),
-//                                       child:Center(
-//                                         child:Text("Buy Now")
-//                                       )
-//                                     )
-//                                   )
-//                               ],
-//                             )
-//                           ),
-//                         ],
-//                       );
-
-                    },
-                  
-                  )
+                              // borderRadius: BorderRadius.circular(
+                              //   10,
+                              // ),
+                              // shape: BoxShape.rectangle,
+                              color: Colors.black,
+                            ),
+                            child: Image.network(courseData[index]["imgsrc"],fit:BoxFit.contain),
+                          ),
+                    
+                          Container(
+                            // height:290,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(20),
+                                bottomRight: Radius.circular(20),
+                              ),
+                    
+                              color: Colors.white,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                    
+                              children: [
+                                Column(
+                                  children: [
+                                    const SizedBox(width: 20),
+                                                    
+                                    const SizedBox(width: 20),
+                                                    
+                                    Padding(
+                                      padding: const EdgeInsets.all(10.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            courseData[index]["Name"],
+                                            style: GoogleFonts.montserrat(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 10),
+                                          Row(
+                                            children: [
+                                              Text(
+                                                "${courseData[index]["NoOfLectures"]} Lectures   Total ${courseData[index]["Hours"]}hr    ${courseData[index]["Duration"]} Months",
+                                                style: GoogleFonts.montserrat(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 10),
+                                          Row(
+                                            children: [
+                                              Text(
+                                                "${courseData[index]["Price"]}/- rs ",
+                                                style: GoogleFonts.montserrat(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                );
                 
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+
+            
+              },
+            );
+        }
+
+
+    }
+
+ 
+
+Future<List<DocumentSnapshot>> fetchOwnedCourses() async {
+  courseFetch();
+  final firestore = FirebaseFirestore.instance;
+
+  List<DocumentSnapshot> resultDocs = [];
+
+  for (String courseId in yourOwnCourses) {
+    log("Course id = $courseId");
+    final querySnapshot = await firestore
+        .collection('Users')
+        .where('Id', isEqualTo: courseId)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      log("data is found");
+      resultDocs.add(querySnapshot.docs.first);
+    }else{
+      log("data not found");
+    }
   }
+
+  return resultDocs;
+}
+
+
+
+
+
+
+
+
+    getCourseStream()async{
+       coursesStream = await FirebaseFirestore.instance.collection("Studee123").doc(userId).snapshots();
+    }
+
+  void courseFetch()async{
+      courseFetched = false; 
+  setState(() {}); 
+    
+    log("in course fetch");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    userId = prefs.getString('userId');
+
+    DocumentSnapshot doc =  await FirebaseFirestore.instance.collection("Users").doc(userId).get();
+
+    
+    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+
+    // log("courses id ${data["courses_own"]}");
+
+    yourOwnCourses = data["courses_own"];
+
+    log("your courses are : $yourOwnCourses");
+  for (String courseId in yourOwnCourses) {
+
+    DocumentSnapshot coursesInfo =  await FirebaseFirestore.instance.collection("Studee123").doc(courseId).get();
+   Map<String,dynamic> temp = coursesInfo.data() as Map<String, dynamic>;
+    courseData.add(temp);
+    // log("course data = $courseData");
+  }
+  courseFetched = true;
+
+      setState(() {
+        
+      });
+    log("courses fetched");
+
+
+  
+    }
+         
 }

@@ -52,6 +52,7 @@ class _NotificationScreenState extends State<NotificationScreen>{
                       )
                   ),
                 child:ListView.separated(
+                  physics: BouncingScrollPhysics(),
                     itemCount: 10,
                     separatorBuilder: (context,index){
                       return SizedBox(
@@ -61,54 +62,63 @@ class _NotificationScreenState extends State<NotificationScreen>{
                     itemBuilder: (context,index){
                       return Column(
                         children: [
-                          Container(
-                            // height:100,                        
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              color:Colors.purple,
+                          GestureDetector(
+                            onTap:(){
+                              // Navigator.of(context).push(
+                              //   MaterialPageRoute(builder: (context){
+                              //     return Sorry();
+                              //   })
+                              // );
+                            },
+                            child: Container(
+                              // height:100,                        
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                color:Colors.purple,
+                              ),
+                             child:Padding(
+                               padding: const EdgeInsets.all(15.0),
+                               child:
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        // crossAxisAlignment: CrossAxisAlignment,
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text("New Online Lecture ", style:GoogleFonts.montserrat(
+                                                  fontSize:19,
+                                                  fontWeight:FontWeight.w600
+                                                )),
+                                            // const SizedBox(width:30),
+                                          Text("10hr ago"),
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        height: 2,
+                                      ),
+                                      Text("Lecture No 32 - Structure", 
+                                      style:GoogleFonts.montserrat(
+                                                  fontSize:13,
+                                                  fontWeight:FontWeight.w500
+                                                )
+                                      ),
+                                      // const SizedBox(
+                                      //   height: 6,
+                                      // ),
+                                      Text("Topic - Structure", 
+                                      style:GoogleFonts.montserrat(
+                                                  fontSize:13,
+                                                  fontWeight:FontWeight.w500
+                                                )
+                                      ),
+                                    ],
+                                  )
+                               
+                               
+                             
+                             ),
                             ),
-                           child:Padding(
-                             padding: const EdgeInsets.all(15.0),
-                             child:
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      // crossAxisAlignment: CrossAxisAlignment,
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text("New Online Lecture ", style:GoogleFonts.montserrat(
-                                                fontSize:19,
-                                                fontWeight:FontWeight.w600
-                                              )),
-                                          // const SizedBox(width:30),
-                                        Text("10hr ago"),
-                                      ],
-                                    ),
-                                    const SizedBox(
-                                      height: 2,
-                                    ),
-                                    Text("Lecture No 32 - Structure", 
-                                    style:GoogleFonts.montserrat(
-                                                fontSize:13,
-                                                fontWeight:FontWeight.w500
-                                              )
-                                    ),
-                                    // const SizedBox(
-                                    //   height: 6,
-                                    // ),
-                                    Text("Topic - Structure", 
-                                    style:GoogleFonts.montserrat(
-                                                fontSize:13,
-                                                fontWeight:FontWeight.w500
-                                              )
-                                    ),
-                                  ],
-                                )
-                             
-                             
-                           
-                           ),
                           ),
                         ],
                       );
@@ -124,3 +134,38 @@ class _NotificationScreenState extends State<NotificationScreen>{
     );
   }
 }
+
+
+class Sorry extends StatelessWidget{
+
+  @override
+  Widget build(BuildContext context){
+    return Scaffold(
+      body:SizedBox(
+        width:MediaQuery.of(context).size.width,
+        child:ListView(
+        children: [
+          Image.network("https://res.cloudinary.com/teepublic/image/private/s--xFQ73gkM--/t_Resized%20Artwork/c_fit,g_north_west,h_954,w_954/co_fac2cd,e_outline:48/co_fac2cd,e_outline:inner_fill:48/co_ffffff,e_outline:48/co_ffffff,e_outline:inner_fill:48/co_bbbbbb,e_outline:3:1000/c_mpad,g_center,h_1260,w_1260/b_rgb:eeeeee/t_watermark_lock/c_limit,f_auto,h_630,q_auto:good:420,w_630/v1599197568/production/designs/13688768_0.jpg"),
+          // const SizedBox(height:2),
+          Image.asset("assets/vs.jpg",scale:2),
+          // const SizedBox(height:2),
+          Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Text(
+              // "First of all Thank You so much Chandraaaa❤️🙏.. I am really very Sorry Dear💜...I will not do any mistake again which will directly hurt you... I don't need to tell you, Who is Veena for Sagar...because you already know... But what you should know is You matters to me...just give me once your trust.. I will restore our bond... I don't want to lose you and our bond🙏...Veena tula mahiti ahe mi kiti mand ahe...Tu mhanu shakte sagar bindok ahe...Bolne ki battee...",
+              "Dear Chandraaa❤️, I can't put into words how deeply sorry🙏 I am for my mistake, but your kindness and forgiveness mean more to me than you’ll ever know💜. Thank you for holding onto me even when I faltered. I never want to lose you and the beautiful bond we share—your presence in my life is a blessing I cherish every single day. I promise to make things right, to nurture our connection, and to love you in a way that makes your heart feel safe and adored. You are my heart, my happiness, and I will never take you for granted again..\nlove you, now and always❤️...\nYour Lovely\n Bindok Magar😁",
+            style:TextStyle(
+              fontSize:19,
+              fontWeight: FontWeight.bold
+            )),
+          ),
+
+        ],
+      )
+      )
+    );
+  }
+}
+
+
+
